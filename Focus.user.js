@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         PromptFocus
-// @namespace    https://github.com/YOUR_USERNAME/PromptFocus
-// @version      1.0.0
+// @name         ChatFocus
+// @namespace    https://github.com/YOUR_USERNAME/ChatFocus
+// @version      1.1.0
 // @description  Automatically focus the ChatGPT message composer without interfering with text selection
 // @author       YOUR_USERNAME
 // @match        https://chatgpt.com/*
@@ -15,6 +15,9 @@
 
     const composerXPath =
         '/html/body/div[1]/div/div[3]/div/div/div[1]/main/div[3]/div/div/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div[2]/div[2]/div[2]/div/div/div/div/div/div';
+
+    const textareaXPath =
+        '/html/body/div[1]/div/div[3]/div/div/div[1]/main/div[3]/div/div/div/div[2]/div/div/div/div[2]/div/div/div/div/div/div/div[1]/div[2]/div';
 
     function getElementByXPath(path) {
         try {
@@ -74,6 +77,18 @@
         }
 
         composer.focus();
+    }
+
+    function styleTextarea() {
+        const textarea = getElementByXPath(textareaXPath);
+
+        if (!textarea) {
+            return;
+        }
+
+        textarea.style.border = '1px solid white';
+        textarea.style.borderRadius = '12px';
+        textarea.style.boxSizing = 'border-box';
     }
 
     let mouseDownX = 0;
@@ -139,4 +154,16 @@
         },
         true
     );
+
+    styleTextarea();
+
+    const observer = new MutationObserver(() => {
+        styleTextarea();
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
 })();
